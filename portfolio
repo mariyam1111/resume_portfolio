@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fathima Mariyam - Aspiring Data Analyst</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals with Subtle Teal Accent -->
+    <!-- Application Structure Plan: A single-page, top-down narrative structure was chosen for this interactive resume. It starts with a strong hero section to immediately introduce Fathima and her value proposition. This flows into a quantifiable skills section with an interactive chart, followed by a detailed, filterable project portfolio. The user flow is designed to be intuitive and linear, guiding a recruiter from who she is, to what she can do, to the proof of her work. This is more effective than a simple document as it allows for interactive exploration (chart interaction, project filtering) which encourages deeper engagement with her qualifications. -->
+    <!-- Visualization & Content Choices: 
+    - Report Info: Technical Skills List -> Goal: Compare proficiency levels -> Viz/Presentation Method: Interactive Radar Chart -> Interaction: Hover to see skill names and scores -> Justification: A radar chart provides a compelling multi-axial view of skills, showing strengths in different areas simultaneously. It's more visually engaging than a simple list and allows for quick comparison. -> Library/Method: Chart.js/Canvas.
+    - Report Info: Project Descriptions -> Goal: Organize and detail experience -> Viz/Presentation Method: Interactive Card-based gallery with tags -> Interaction: Clickable filter buttons (e.g., 'Power BI', 'Python') to dynamically show/hide relevant project cards. -> Justification: This allows recruiters to instantly see projects related to the technologies they care about most, making her experience feel more relevant to specific job descriptions. -> Library/Method: HTML/Tailwind + Vanilla JS for filtering logic.
+    - Report Info: Career Summary & Contact -> Goal: Inform and provide call-to-action -> Viz/Presentation Method: Clear, concise text blocks with linked icons -> Interaction: Clickable links for email, LinkedIn, GitHub -> Justification: Standard, universally understood method for providing contact and profile links. Ensures ease of access for recruiters. -> Library/Method: HTML/Tailwind.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8f7f4;
+            color: #4a4a4a;
+        }
+        .bg-warm-neutral { background-color: #f8f7f4; }
+        .bg-secondary-neutral { background-color: #ffffff; }
+        .text-main { color: #2c3e50; }
+        .text-secondary { color: #5a6872; }
+        .accent-color { color: #008080; }
+        .accent-bg { background-color: #008080; }
+        .accent-border { border-color: #008080; }
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 50%;
+            height: 4px;
+            background-color: #008080;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+        .project-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+        }
+        .filter-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .filter-btn.active {
+            background-color: #008080;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-warm-neutral">
+
+    <header class="bg-secondary-neutral shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-xl font-bold text-main">Fathima Mariyam</div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#about" class="text-secondary hover:text-accent-color transition duration-300">About</a>
+                <a href="#skills" class="text-secondary hover:text-accent-color transition duration-300">Skills</a>
+                <a href="#projects" class="text-secondary hover:text-accent-color transition duration-300">Projects</a>
+                <a href="#experience" class="text-secondary hover:text-accent-color transition duration-300">Experience</a>
+                <a href="#education" class="text-secondary hover:text-accent-color transition duration-300">Education</a>
+            </div>
+             <button id="mobile-menu-button" class="md:hidden text-main focus:outline-none">
+                <div class="w-6 h-0.5 bg-main mb-1.5"></div>
+                <div class="w-6 h-0.5 bg-main"></div>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4">
+            <a href="#about" class="block py-2 text-secondary hover:text-accent-color">About</a>
+            <a href="#skills" class="block py-2 text-secondary hover:text-accent-color">Skills</a>
+            <a href="#projects" class="block py-2 text-secondary hover:text-accent-color">Projects</a>
+            <a href="#experience" class="block py-2 text-secondary hover:text-accent-color">Experience</a>
+            <a href="#education" class="block py-2 text-secondary hover:text-accent-color">Education</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        <section id="about" class="text-center mb-20 pt-16">
+            <h1 class="text-5xl font-extrabold text-main mb-4">Fathima Mariyam</h1>
+            <p class="text-xl text-accent-color font-semibold mb-6">Aspiring Data Analyst & Power BI Developer</p>
+            <p class="max-w-3xl mx-auto text-secondary text-lg mb-8">
+                Motivated and detail-oriented Data Analyst with a strong foundation in transforming raw data into actionable business insights. Highly skilled in SQL, Python, Excel, and developing interactive Power BI Dashboards. Seeking an internship role to leverage analytical and technical skills in solving real-world business problems and driving data-driven decision-making.
+            </p>
+            <div class="flex justify-center space-x-6 text-2xl">
+                <a href="mailto:mariyamfathima1111@gmail.com" class="text-secondary hover:text-accent-color transition duration-300" title="Email">&#9993;</a>
+                <a href="https://www.linkedin.com/in/fathima-mariyam-37842a310/" target="_blank" class="text-secondary hover:text-accent-color transition duration-300" title="LinkedIn">&#128188;</a>
+                <a href="https://github.com/mariyam1111" target="_blank" class="text-secondary hover:text-accent-color transition duration-300" title="GitHub">&#128187;</a>
+            </div>
+        </section>
+
+        <section id="skills" class="mb-20 pt-16">
+            <h2 class="section-title text-main text-center">Technical Skills</h2>
+            <p class="text-center text-secondary mb-12 max-w-2xl mx-auto">This interactive chart provides a visual representation of my proficiency across key areas in data analysis and business intelligence. Hover over the points on the chart to see my skill level in each domain, from data wrangling and visualization to programming and machine learning.</p>
+            <div class="chart-container">
+                <canvas id="skillsChart"></canvas>
+            </div>
+        </section>
+
+        <section id="projects" class="mb-20 pt-16">
+            <h2 class="section-title text-main text-center">Project Portfolio</h2>
+             <p class="text-center text-secondary mb-8 max-w-3xl mx-auto">Below is a selection of my key projects. Use the filter buttons to explore projects based on the technologies used. Clicking a filter will highlight projects that utilized that specific tool or language, giving you a focused look at my hands-on experience.</p>
+            <div class="flex justify-center flex-wrap gap-2 mb-8">
+                <button class="filter-btn active px-4 py-2 bg-gray-200 text-gray-700 rounded-full" data-filter="all">All</button>
+                <button class="filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full" data-filter="Power BI">Power BI</button>
+                <button class="filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full" data-filter="Python">Python</button>
+                <button class="filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full" data-filter="SQL">SQL</button>
+                <button class="filter-btn px-4 py-2 bg-gray-200 text-gray-700 rounded-full" data-filter="Machine Learning">Machine Learning</button>
+            </div>
+            <div id="project-gallery" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="project-card bg-secondary-neutral p-6 rounded-lg shadow-sm" data-tags="Power BI,DAX,SQL">
+                    <h3 class="text-xl font-bold text-main mb-2">Sales Performance Dashboard</h3>
+                    <p class="text-secondary mb-4">Designed and implemented an interactive Power BI dashboard analyzing complex sales trends and performance metrics across multiple geographical regions. Enabled users to track critical KPIs like revenue growth and profit margin.</p>
+                    <div class="flex flex-wrap gap-2 text-sm">
+                        <span class="bg-teal-100 text-teal-800 px-2 py-1 rounded">Power BI</span>
+                        <span class="bg-teal-100 text-teal-800 px-2 py-1 rounded">DAX</span>
+                        <span class="bg-teal-100 text-teal-800 px-2 py-1 rounded">SQL</span>
+                    </div>
+                </div>
+                 <div class="project-card bg-secondary-neutral p-6 rounded-lg shadow-sm" data-tags="Python,Machine Learning">
+                    <h3 class="text-xl font-bold text-main mb-2">Loan Approval Prediction</h3>
+                    <p class="text-secondary mb-4">Developed a robust classification model using Python (Logistic Regression & Random Forest) to accurately predict loan approval outcomes. Improved model accuracy through advanced feature engineering and data preprocessing.</p>
+                    <div class="flex flex-wrap gap-2 text-sm">
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">Python</span>
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">Machine Learning</span>
+                    </div>
+                </div>
+                <div class="project-card bg-secondary-neutral p-6 rounded-lg shadow-sm" data-tags="Python,Excel,Machine Learning">
+                    <h3 class="text-xl font-bold text-main mb-2">Customer Churn Analysis</h3>
+                    <p class="text-secondary mb-4">Engineered a machine learning model using Python to proactively predict customer churn. Executed comprehensive EDA with Pandas and NumPy to identify key churn drivers and inform retention strategies.</p>
+                    <div class="flex flex-wrap gap-2 text-sm">
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">Python</span>
+                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded">Excel</span>
+                         <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">Machine Learning</span>
+                    </div>
+                </div>
+                <div class="project-card bg-secondary-neutral p-6 rounded-lg shadow-sm" data-tags="Power BI">
+                    <h3 class="text-xl font-bold text-main mb-2">E-Commerce Sales Analysis</h3>
+                    <p class="text-secondary mb-4">Created an interactive Power BI dashboard to visualize and analyze e-commerce sales data, focusing on revenue, product performance, and regional trends. Delivered key insights to stakeholders to boost sales.</p>
+                    <div class="flex flex-wrap gap-2 text-sm">
+                        <span class="bg-teal-100 text-teal-800 px-2 py-1 rounded">Power BI</span>
+                    </div>
+                </div>
+                <div class="project-card bg-secondary-neutral p-6 rounded-lg shadow-sm" data-tags="SQL,Power BI">
+                    <h3 class="text-xl font-bold text-main mb-2">Bike Sales Analysis</h3>
+                    <p class="text-secondary mb-4">Utilized SQL to efficiently extract, filter, and aggregate complex bike sales information by region, model, and month. Constructed a Power BI dashboard to visualize sales trends and revenue patterns.</p>
+                     <div class="flex flex-wrap gap-2 text-sm">
+                        <span class="bg-red-100 text-red-800 px-2 py-1 rounded">SQL</span>
+                        <span class="bg-teal-100 text-teal-800 px-2 py-1 rounded">Power BI</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="experience" class="mb-20 pt-16">
+            <h2 class="section-title text-main text-center">Internships & Simulations</h2>
+             <p class="text-center text-secondary mb-12 max-w-2xl mx-auto">My practical experience is built on a combination of a formal internship and valuable, industry-relevant virtual simulations. This section outlines how I've applied my analytical skills in both supported and self-directed project environments.</p>
+            <div class="space-y-8 max-w-3xl mx-auto">
+                <div class="bg-secondary-neutral p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-bold text-main">Data Analyst Intern</h3>
+                    <p class="text-secondary mb-1">Codec Technology (Online) | July 2025 – September 2025</p>
+                    <ul class="list-disc list-inside text-secondary space-y-1">
+                        <li>Assisted senior analysts in data analysis tasks using SQL and Python.</li>
+                        <li>Contributed to the development of Power BI dashboards for internal reporting.</li>
+                    </ul>
+                </div>
+                <div class="bg-secondary-neutral p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-bold text-main">TATA Gen AI Data Analyst Simulation</h3>
+                    <p class="text-secondary mb-1">Forage</p>
+                     <p class="text-secondary">Completed a virtual project simulating real-world data analyst tasks using generative AI tools.</p>
+                </div>
+                 <div class="bg-secondary-neutral p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-bold text-main">Deloitte Data Analyst Simulation</h3>
+                    <p class="text-secondary mb-1">Forage</p>
+                     <p class="text-secondary">Completed a virtual internship simulation, executing core data analyst tasks.</p>
+                </div>
+                 <div class="bg-secondary-neutral p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-bold text-main">Cloud Intern</h3>
+                    <p class="text-secondary mb-1">Codec Technologies</p>
+                    <p class="text-secondary">Supported cloud computing tasks, data management, and project coordination.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="education" class="pt-16">
+            <h2 class="section-title text-main text-center">Education & Certifications</h2>
+             <p class="text-center text-secondary mb-12 max-w-2xl mx-auto">My formal education in AI and Data Science provides the theoretical foundation for my technical skills, complemented by professional certifications that demonstrate my commitment to continuous learning and industry best practices.</p>
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                 <div class="bg-secondary-neutral p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-bold text-main mb-2">Education</h3>
+                     <div class="mb-4">
+                        <p class="font-semibold">B.TECH IN ARTIFICIAL INTELLIGENCE AND DATA SCIENCE</p>
+                        <p class="text-secondary">Saranathan College of Engineering</p>
+                        <p class="text-secondary">CGPA: 8.0</p>
+                    </div>
+                </div>
+                <div class="bg-secondary-neutral p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-bold text-main mb-2">Certifications</h3>
+                    <ul class="list-disc list-inside text-secondary space-y-1">
+                        <li>IBM Data Analyst Professional Certificate (In Progress)</li>
+                        <li>Power BI - SWAYAM</li>
+                        <li>Excel for Data Analysis - Coursera</li>
+                        <li>Data Analysis with Python - Cognitive Class (IBM)</li>
+                        <li>SQL & Relational Database 101 - Cognitive Class (IBM)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-secondary-neutral mt-20 py-6 text-center text-secondary">
+        <p>&copy; 2025 Fathima Mariyam. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const skillsCtx = document.getElementById('skillsChart').getContext('2d');
+            new Chart(skillsCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['SQL', 'Power BI / DAX', 'Python', 'Machine Learning', 'Data Cleaning', 'Excel', 'EDA'],
+                    datasets: [{
+                        label: 'Proficiency',
+                        data: [90, 85, 80, 75, 95, 80, 85],
+                        backgroundColor: 'rgba(0, 128, 128, 0.2)',
+                        borderColor: 'rgba(0, 128, 128, 1)',
+                        pointBackgroundColor: 'rgba(0, 128, 128, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(0, 128, 128, 1)'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 14,
+                                    family: 'Inter, sans-serif'
+                                },
+                                color: '#4a4a4a'
+                            },
+                            ticks: {
+                                backdropColor: 'rgba(248, 247, 244, 0.7)',
+                                color: '#5a6872',
+                                stepSize: 20
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                             callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.raw + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const projectCards = document.querySelectorAll('.project-card');
+
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    document.querySelector('.filter-btn.active').classList.remove('active');
+                    button.classList.add('active');
+
+                    const filter = button.dataset.filter;
+
+                    projectCards.forEach(card => {
+                        const tags = card.dataset.tags.split(',');
+                        if (filter === 'all' || tags.includes(filter)) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                    if (mobileMenu.classList.contains('hidden') === false){
+                         mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+
+        });
+    </script>
+
+</body>
+</html>
